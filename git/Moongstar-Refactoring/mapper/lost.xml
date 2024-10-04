@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.lost">
+	<select id="selectLostListWithCgoryAndSearch" parameterType="Map" resultType="dto.Lost">
+	
+  		SELECT * FROM lost
+  		<where>
+  				lostBlind is null
+  			<if test="lostCgory != null">
+    			AND lostCgory = #{lostCgory}
+  			</if>
+   			<if test="searchText != null">
+    			AND (lostAddress like '%${searchText}%' or lostName like '%${searchText}%')
+  			</if>
+   		</where>
+  		order by lostNum desc
+   		limit #{row}, 8
+	</select>
+	
+	<select id="selectLostCountWithCgoryAndSearch" parameterType="Map" resultType="Integer">
+  		SELECT count(*) FROM lost
+  		<where>
+  				lostBlind is null
+  			<if test="lostCgory != null">
+    			AND lostCgory = #{lostCgory}
+  			</if>
+   			<if test="searchText != null">
+    			AND (lostAddress like '%${searchText}%' or lostName like '%${searchText}%')
+  			</if>
+  		</where>
+	</select>
+
+	<select id="selectLostList" parameterType="Integer" resultType="dto.Lost">
+		<![CDATA[
+			select * from lost order by lostNum desc
+   			limit #{row}, 9
+		]]>
+	</select>
+	
+	<select id="selectBoardCount" resultType="Integer">
+   		<![CDATA[
+   			select count(*) from lost
+   		]]>
+	</select>
+	
+	<select id="selectLost" parameterType="Integer" resultType="dto.Lost">
+   		<![CDATA[
+   			select * from lost where lostNum=#{lostNum}
+   		]]>
+	</select>
+	
+	<insert id="insertLost" parameterType="dto.Lost" useGeneratedKeys="true" keyProperty="lostNum">
+		<![CDATA[
+			insert into lost (lostName,lostAddress,lostWriteDate,lostChar,lostEtc,lostPhoto,lostCgory,memId)
+			values (#{lostName},#{lostAddress},curdate(), #{lostChar},#{lostEtc},#{lostPhoto},#{lostCgory},#{memId})
+		]]>
+	</insert>
+	
+	<update id="updateLost" parameterType="dto.Lost">
+		update lost
+   		<trim prefix="SET" suffixOverrides=",">
+   			<if test="lostAddress !=null">lostAddress=#{lostAddress},</if>
+   			<if test="lostChar !=null">lostChar=#{lostChar},</if>
+   			<if test="lostEtc !=null">lostEtc=#{lostEtc},</if>
+   			<if test="lostCgory !=null">lostCgory=#{lostCgory},</if>
+   			<if test="lostPhoto !=null">lostPhoto=#{lostPhoto}</if>
+   		</trim>
+   		where lostNum=#{lostNum}
+	</update>
+	
+	<delete id="deleteLost" parameterType="Integer">
+		delete 
+	</delete>
+	
+	<select id="selectLostComment" parameterType="Integer"
+		resultType="dto.Comment">
+		<![CDATA[
+			select * from lostComment where lostNum=#{lostNum}
+		]]>
+	</select>
+
+	<insert id="insertLostComment" parameterType="dto.Comment" useGeneratedKeys="true" keyProperty="commNum">
+		<![CDATA[
+			insert into lostComment (commNick,lostNum,commContent,commDate)
+			values (#{commNick},#{boardNum},#{commContent},curdate())
+		]]>
+	</insert>
+	
+	<delete id="deleteLostComment" parameterType="Integer">
+		<![CDATA[
+			delete from lostcomment where commNum=#{commNum}
+		]]>
+	</delete>
+	
+	<select id="selectLostNick" parameterType="String"
+		resultType="String">
+		<![CDATA[
+			select memNick from member where memId=#{memId}
+		]]>
+	</select>
+	
+	<update id="updateLostBlind" parameterType="Integer">
+		<![CDATA[
+			update lost set lostBlind="blind" where lostNum=#{lostNum}
+		]]>
+	</update>
+	
+	<select id="selectLostListOnMain" resultType="dto.Lost">
+		<![CDATA[
+			SELECT * FROM lost ORDER BY lostNum DESC LIMIT 5;
+		]]>
+	</select>
+	
+	<select id="selectLostListByMemId" resultType="dto.Lost">
+		<![CDATA[
+			SELECT * FROM lost where lostBlind is null and memId=#{memId} ORDER BY tempNum desc;
+		]]>
+	</select>
+</mapper>

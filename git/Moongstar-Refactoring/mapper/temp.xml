@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.temp">
+	<select id="selectTempListWithCgoryAndSearch" parameterType="Map" resultType="dto.Temp">
+	
+  		SELECT * FROM tempshelter
+  		<where>
+  				tempBlind is null
+  			<if test="tempCgory != null">
+    			AND tempCgory = #{tempCgory}
+  			</if>
+   			<if test="searchText != null">
+    			AND (tempAddress like '%${searchText}%' or tempName like '%${searchText}%')
+  			</if>
+   		</where>
+  		order by tempNum desc
+   		limit #{row}, 8
+	</select>
+	
+	<select id="selectTempCountWithCgoryAndSearch" parameterType="Map" resultType="Integer">
+  		SELECT count(*) FROM tempshelter
+  		<where>
+  				tempBlind is null
+  			<if test='tempCgory != null'>
+    			AND tempCgory = #{tempCgory}
+  			</if>
+   			<if test="searchText != null">
+    			AND (tempAddress like '%${searchText}%' or tempName like '%${searchText}%')
+  			</if>
+  		</where>
+	</select>
+	
+	<select id="selectTempList" parameterType="Integer" resultType="dto.Temp">
+		<![CDATA[
+			select * from tempshelter order by tempNum desc
+   			limit #{row}, 9
+		]]>
+	</select>
+	
+	<select id="selectBoardCount" resultType="Integer">
+   		<![CDATA[
+   			select count(*) from tempshelter
+   		]]>
+	</select>
+	
+	<select id="selectTempListWithTempCgory" parameterType="Map" resultType="dto.Temp">
+		<![CDATA[
+			select * from tempshelter where tempCgory=#{tempCgory} order by tempNum desc
+   			limit #{row}, 9
+		]]>
+	</select>
+	
+	<select id="selectBoardCountWithTempCgory" resultType="Integer">
+   		<![CDATA[
+   			select count(*) from tempshelter where tempCgory=#{tempCgory}
+   		]]>
+	</select>
+		
+	<select id="selectTemp" parameterType="Integer" resultType="dto.Temp">
+   		<![CDATA[
+   			select * from tempshelter where tempNum=#{tempNum}
+   		]]>
+	</select>
+	
+	<insert id="insertTemp" parameterType="dto.Temp" useGeneratedKeys="true" keyProperty="tempNum">
+		<![CDATA[
+			insert into tempshelter (tempName,tempAddress,tempWriteDate,protectDate,tempChar,tempEtc,tempPhoto,tempCgory,memId)
+			values (#{tempName},#{tempAddress},curdate(), #{protectDate},#{tempChar},#{tempEtc},#{tempPhoto},#{tempCgory},#{memId})
+		]]>
+	</insert>
+	
+	<update id="updateTemp" parameterType="dto.Temp">
+		update tempshelter
+   		<trim prefix="SET" suffixOverrides=",">
+   			<if test="tempAddress !=null">tempAddress=#{tempAddress},</if>
+   			<if test="protectDate !=null">protectDate=#{protectDate},</if>
+   			<if test="tempChar !=null">tempChar=#{tempChar},</if>
+   			<if test="tempEtc !=null">tempEtc=#{tempEtc},</if>
+   			<if test="tempCgory !=null">tempCgory=#{tempCgory},</if>
+   			<if test="tempPhoto !=null">tempPhoto=#{tempPhoto}</if>
+   		</trim>
+   		where tempNum=#{tempNum}
+	</update>
+	
+	<select id="selectTempComment" parameterType="Integer"
+		resultType="dto.Comment">
+		<![CDATA[
+			select * from tempComment where tempNum=#{tempNum}
+		]]>
+	</select>
+
+	<insert id="insertTempComment" parameterType="dto.Comment" useGeneratedKeys="true" keyProperty="commNum">
+		<![CDATA[
+			insert into tempComment (commNick,tempNum,commContent,commDate)
+			values (#{commNick},#{boardNum},#{commContent},curdate())
+		]]>
+	</insert>
+	
+	<delete id="deleteTempComment" parameterType="Integer">
+		<![CDATA[
+			delete from tempcomment where commNum=#{commNum}
+		]]>
+	</delete>
+	
+	<select id="selectTempNick" parameterType="String"
+		resultType="String">
+		<![CDATA[
+			select memNick from member where memId=#{memId}
+		]]>
+	</select>
+	
+	<update id="updateTempBlind" parameterType="Integer">
+		<![CDATA[
+			update tempshelter set tempBlind="blind" where tempNum=#{tempNum}
+		]]>
+	</update>
+	
+	<select id="selectTempListOnMain" resultType="dto.Temp">
+		<![CDATA[
+			SELECT * FROM tempshelter where tempBlind is null ORDER BY tempNum DESC LIMIT 5;
+		]]>
+	</select>
+	
+	<select id="selectTempListByMemId" resultType="dto.Temp">
+		<![CDATA[
+			SELECT * FROM tempshelter where tempBlind is null and memId=#{memId} ORDER BY tempNum desc;
+		]]>
+	</select>
+</mapper>

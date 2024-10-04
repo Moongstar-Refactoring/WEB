@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.member">
+	<select id="selectMember" parameterType="String"
+		resultType="dto.Member">
+		<![CDATA[
+			select * from member where memId=#{memId}
+		]]>
+	</select>
+	<select id="selectMemberN" parameterType="String"
+		resultType="dto.Member">
+		<![CDATA[
+			select * from member where memNick=#{memNick}
+		]]>
+	</select>
+	<select id="selectFindId" parameterType="Map"
+		resultType="String">
+    <![CDATA[
+        SELECT memId FROM member WHERE memNick = #{memNick} AND memPhone = #{memPhone}
+    ]]>
+	</select>
+	<insert id="insertMember" parameterType="dto.Member">
+		<![CDATA[
+			insert into member (memId,memPw,memNick,memPhone,memAddress1,memAddress2,memEmail,memDate,memProfile)
+			values (#{memId},#{memPw},#{memNick},#{memPhone},#{memAddress1},#{memAddress2},#{memEmail},curdate(),#{memProfile})
+		]]>
+	</insert>
+	<select id="selectFindPw" parameterType="Map"
+		resultType="String">
+    <![CDATA[
+        SELECT memPw FROM member WHERE memId = #{memId} AND memEmail = #{memEmail}
+    ]]>
+	</select>
+	<update id="updatePw" parameterType="Map">
+	    <![CDATA[
+		UPDATE member
+		SET memPw = #{memPw}
+		WHERE memId = #{memId}
+		    ]]>
+	</update>
+	
+	<update id="updateMemberProfile" parameterType="Map">
+	    <![CDATA[
+		UPDATE member
+		SET memProfile = #{fileNum}
+		WHERE memId = #{memId}
+		    ]]>
+	</update>
+	
+	<select id="selectMyFreeList" parameterType="String"
+		resultType="dto.FBoard">
+		<![CDATA[
+			select * from freeboard where memId=#{memId} and freeHidden is false order by freeNum desc limit 5
+		]]>
+	</select>
+	
+	<select id="selectMyFreeCommentList" parameterType="String"
+		resultType="dto.FreeComment" >
+		<![CDATA[
+			select * from freecomment where commNick=#{commNick} and commBlind is null order by commNum desc limit 5
+		]]>
+	</select>
+</mapper>

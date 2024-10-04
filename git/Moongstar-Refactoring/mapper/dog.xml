@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.dog">
+	<select id="selectDog" parameterType="String"
+		resultType="dto.Dog">
+		<![CDATA[
+			select * from dog where memId=#{memId}
+		]]>
+	</select>
+	<select id="selectOneDog" parameterType="Integer" resultType="dto.Dog">
+		<![CDATA[
+			select * from dog where dogNum=#{dogNum}
+		]]>
+	</select>
+
+	<insert id="insertDog" parameterType="dto.Dog" useGeneratedKeys="true" keyProperty="dogNum"> 
+	 <![CDATA[
+        insert into dog (dogName, memId, dogAge, dogProfile, dogGender)
+        values (#{dogName}, #{memId}, #{dogAge}, #{dogProfile}, #{dogGender})
+    ]]>
+	</insert>
+	
+	<update id="updateDog" parameterType="dto.Dog">
+		update dog
+   		<trim prefix="SET" suffixOverrides=",">
+   			<if test="dogName !=null">dogName=#{dogName},</if>
+   			<if test="dogAge !=null">dogAge=#{dogAge},</if>
+   			<if test="dogGender !=null">dogGender=#{dogGender},</if>
+   			<if test="dogProfile !=null">dogProfile=#{dogProfile}</if>
+   		</trim>
+   		where dogNum=#{dogNum}
+	</update>
+	
+	<delete id="deleteDog" parameterType="Integer">
+		DELETE FROM dog WHERE dogNum=#{dogNum}
+	</delete>
+</mapper>

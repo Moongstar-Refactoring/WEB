@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.tempComment">
+	<select id="selectTempComment" parameterType="Integer"
+		resultType="dto.Comment">
+		<![CDATA[
+			select * from tempComment where tempNum=#{tempNum}
+		]]>
+	</select>
+
+	<insert id="insertTempComment" parameterType="dto.Comment">
+		<![CDATA[
+			insert into tempComment (commNick,tempNum,commContent,commDate)
+			values (#{commNick},#{tempNum},#{commContent},curdate())
+		]]>
+	</insert>
+	<update id="updateDog">
+		UPDATE dog SET dogName=#{dogName} dogAge=#{dogAge} dogProfile=#{dogProfile} dogGender=#{dogGender}
+		WHERE memId=#{memId}
+	</update>
+	<delete id="deleteDog">
+		DELETE FROM dog WHERE memId=#{memId}
+	</delete>
+</mapper>

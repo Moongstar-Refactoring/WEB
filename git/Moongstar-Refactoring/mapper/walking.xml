@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.walking">
+	
+<insert id="insertWalking" parameterType="dto.Walking" useGeneratedKeys="true" keyProperty="walkNum">
+	<![CDATA[ 
+	insert into walking(walkWriter,walkName,walkLat,walkLong,walkAddress3,walkReason)
+	values(#{walkWriter},#{walkName},#{walkLat},#{walkLong},#{walkAddress3},#{walkReason})
+	]]>
+</insert>
+
+	<select id="selectWalkingList" resultType="dto.Walking">
+		<![CDATA[
+			select * from walking
+		]]>
+	</select>
+
+	<select id="selectWalking" parameterType="Integer" resultType="dto.Walking">
+		<![CDATA[ 
+		select * from walking where walkNum = #{walkNum}
+		]]>
+		
+	</select>
+	
+		<update id="updateWalking" parameterType="dto.Walking">
+		update walking
+   		<trim prefix="SET" suffixOverrides=",">
+   			<if test="walkName !=null">walkName=#{walkName},</if>
+   			<if test="walkReason !=null">walkReason=#{walkReason},</if>
+   			<if test="walkBlind !=null">walkBlind=1</if>
+   		</trim>
+   		where walkNum=#{walkNum}
+	</update>
+	
+	<select id="selectWalkComment" parameterType="Integer"
+		resultType="dto.Comment">
+		<![CDATA[
+			select * from walkComment where walkNum=#{walkNum}
+		]]>
+	</select>
+
+	<insert id="insertWalkComment" parameterType="dto.Comment">
+		<![CDATA[
+			insert into walkComment (commNick,walkNum,commContent,commDate)
+			values (#{commNick},#{boardNum},#{commContent},curdate())
+		]]>
+	</insert>
+	
+	<select id="selectWalkNick" parameterType="String"
+		resultType="String">
+		<![CDATA[
+			select memNick from member where memId=#{memId}
+		]]>
+	</select>
+	
+	<select id="searchWalking" parameterType="Map" resultType="dto.Walking">
+  		SELECT * FROM walking
+  			<where>
+  				walkBlind is false
+  				<if test="walkAddress3 != walkAddress3">
+    			AND walkAddress3 = #{walkAddress3}
+  				</if>
+   				<if test="searchText != null">
+    			AND walkAddress3 like '%${searchText}%'
+  				</if>
+   			</where>
+  		order by walkNum desc
+	</select>
+	
+	<select id="selectWalkListOnMain" resultType="dto.Walking">
+		<![CDATA[
+			SELECT * FROM walking where walkBlind is false ORDER BY walkNum DESC LIMIT 4;
+		]]>
+	</select>
+	
+</mapper>
